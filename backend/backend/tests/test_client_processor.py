@@ -1,8 +1,15 @@
 import pytest
 import os
+from rest_framework.test import APIClient
+from rest_framework import status
+from django.urls import reverse
 from backend.parsers.csv_parser import parse_csv
 from backend.parsers.json_parser import parse_json
 from backend.services.client_processor import ClientProcessor
+
+@pytest.fixture
+def api_client():
+    return APIClient()
 
 @pytest.fixture
 def processor():
@@ -105,3 +112,25 @@ def test_process_client_data_with_invalid_json(processor):
     invalid_data = [{'invalid_field': 'data'}]
     with pytest.raises(KeyError):
         processor.process(invalid_data[0])
+
+@pytest.mark.django_db
+def test_process_file_pagination(api_client, csv_data, json_data):
+    combined_data = csv_data + json_data
+    processor = ClientProcessor()
+    processed_data = [processor.process(data) for data in combined_data]
+
+    url = reverse('process_file')
+
+    response = api_client.get(url, {'page': 1, 'page_size': 10})
+    assert response.status_code == status.HTTP_200_OK
+    assert 'results' in response.data
+    assert len(response.data['results']) <= 10
+    assert response.data['count'] == len(processed_data)
+
+    response = api_client.get(url, {'page': 2, 'page_size': 10})
+    assert response.status_code == status.HTTP_200_OK
+    assert 'results' in response.data
+    assert len(response.data['results']) <= 10
+
+    assert 'next' in response.data
+    assert 'previous' in response.data
