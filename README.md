@@ -3,6 +3,9 @@
 This repo contains a small project focused to load, parse, standarize, paginate and return as an API data related to our clients.
 
 
+This repo is a solution proposal for the Code Challenge at: https://github.com/juntossomosmais/code-challenge.
+
+
 ## Setting Up the Environment
 
     docker-compose up --build
