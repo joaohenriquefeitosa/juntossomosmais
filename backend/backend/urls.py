@@ -19,6 +19,6 @@ from django.urls import path
 from .views import process_file
 
 urlpatterns = [
-    path('', process_file),
+    path('process_file/', process_file, name='process_file'),
     path('admin/', admin.site.urls),
 ]
