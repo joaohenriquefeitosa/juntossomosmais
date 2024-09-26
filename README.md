@@ -28,4 +28,4 @@ and run:
 
     pytest
 
-Note: We currently have 5 tests (backend/fibonacci/tests/test_views.py).
+Note: We currently have 5 tests (backend/backend/tests/test_views.py).
